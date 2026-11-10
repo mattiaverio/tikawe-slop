@@ -197,6 +197,43 @@ def remove_route(route_id):
         return redirect("/")
     return redirect("/route/" + str(route_id))
 
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
+    require_login()
+    check_csrf()
+
+    content = request.form["content"]
+    if not content.strip() or len(content) > 1000:
+        abort(403)
+    rating = request.form["rating"]
+    if not re.search("^[1-5]$", rating):
+        abort(403)
+    route_id = request.form["route_id"]
+    route = routes.get_route(route_id)
+    if not route:
+        abort(403)
+    user_id = session["user_id"]
+
+    routes.add_comment(route_id, user_id, content, int(rating))
+    flash("Kommentti lisätty")
+    return redirect("/route/" + str(route_id))
+
+@app.route("/remove_comment", methods=["POST"])
+def remove_comment():
+    require_login()
+    check_csrf()
+
+    comment_id = request.form["comment_id"]
+    comment = routes.get_comment(comment_id)
+    if not comment:
+        abort(404)
+    if comment["user_id"] != session["user_id"]:
+        abort(403)
+
+    routes.remove_comment(comment_id)
+    flash("Kommentti poistettu")
+    return redirect("/route/" + str(comment["route_id"]))
+
 @app.route("/register")
 def register():
     return render_template("register.html", filled={})
