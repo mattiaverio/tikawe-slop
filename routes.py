@@ -25,6 +25,30 @@ def add_route(title, description, length_km, user_id, classes):
 
     return route_id
 
+def get_route_count():
+    sql = "SELECT COUNT(id) FROM routes"
+    return db.query(sql)[0][0]
+
+def get_routes(page, page_size):
+    sql = """SELECT routes.id,
+                    routes.title,
+                    routes.length_km,
+                    users.id user_id,
+                    users.username,
+                    COUNT(comments.id) comment_count,
+                    ROUND(AVG(comments.rating), 1) average_rating
+             FROM (SELECT id, title, length_km, user_id
+                   FROM routes
+                   ORDER BY id DESC
+                   LIMIT ? OFFSET ?) routes
+                  JOIN users ON routes.user_id = users.id
+                  LEFT JOIN comments ON routes.id = comments.route_id
+             GROUP BY routes.id
+             ORDER BY routes.id DESC"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, [limit, offset])
+
 def get_route(route_id):
     sql = """SELECT routes.id,
                     routes.title,
