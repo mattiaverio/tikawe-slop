@@ -1,0 +1,170 @@
+body {
+  margin: 0;
+  font-family: Verdana, Geneva, sans-serif;
+  line-height: 1.5;
+  color: #22301f;
+  background-color: #f1efe6;
+}
+
+.container {
+  margin: auto;
+  max-width: 46em;
+  padding: 0 1em;
+}
+
+header {
+  padding: 1em 0;
+  color: white;
+  background-color: #2f5d3a;
+  border-bottom: 0.3em solid #d9a441;
+}
+
+header h1 {
+  margin: 0 0 0.3em 0;
+  font-size: 1.6em;
+}
+
+header a,
+header .link {
+  color: white;
+}
+
+header h1 a {
+  text-decoration: none;
+}
+
+nav a,
+nav form {
+  display: inline-block;
+  margin-right: 1.2em;
+}
+
+main {
+  padding-top: 1em;
+  padding-bottom: 3em;
+}
+
+h2 {
+  margin-top: 0.5em;
+  color: #2f5d3a;
+}
+
+a {
+  color: #1d5c8a;
+}
+
+a:hover,
+.link:hover {
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  margin: 1em 0;
+  border-radius: 0.4em;
+}
+
+.route,
+.comment {
+  margin: 0.8em 0;
+  padding: 0.6em 1em;
+  background-color: white;
+  border: 1px solid #cfcab5;
+  border-left: 0.4em solid #2f5d3a;
+  border-radius: 0.4em;
+}
+
+.comment {
+  border-left-color: #d9a441;
+}
+
+.route h3 {
+  margin: 0;
+  font-size: 1.1em;
+}
+
+.details {
+  margin: 0.2em 0;
+  font-size: 0.85em;
+  color: #5a6657;
+}
+
+.facts {
+  padding: 0.8em 1em 0.8em 2.2em;
+  background-color: #e3e9d8;
+  border-radius: 0.4em;
+}
+
+.actions a {
+  margin-right: 1em;
+}
+
+.pages {
+  margin-top: 1.5em;
+  text-align: center;
+}
+
+.pages a,
+.pages button {
+  margin: 0 0.8em;
+}
+
+.info {
+  margin: 0 0 1em 0;
+  padding: 0.6em 1em;
+  color: white;
+  background-color: #2f5d3a;
+  border-radius: 0.4em;
+}
+
+.error {
+  background-color: #a8322d;
+}
+
+input[type="text"],
+input[type="password"],
+select,
+textarea {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 0.4em;
+  font: inherit;
+  background-color: white;
+  border: 1px solid #8d947f;
+  border-radius: 0.3em;
+}
+
+input[type="submit"] {
+  padding: 0.5em 1.2em;
+  font: inherit;
+  color: white;
+  background-color: #2f5d3a;
+  border: none;
+  border-radius: 0.3em;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #244a2d;
+}
+
+input[type="submit"].secondary {
+  color: #22301f;
+  background-color: #cfcab5;
+}
+
+.link,
+input[type="submit"].link {
+  padding: 0;
+  font: inherit;
+  color: #1d5c8a;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+header input[type="submit"].link {
+  color: white;
+}
