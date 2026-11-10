@@ -88,6 +88,25 @@ def index(page=1):
     return render_template("index.html", routes=page_routes,
                            page=page, page_count=page_count)
 
+@app.route("/user/<int:user_id>")
+@app.route("/user/<int:user_id>/<int:page>")
+def show_user(user_id, page=1):
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)
+
+    statistics = users.get_statistics(user_id)
+    page_count = get_page_count(statistics["route_count"])
+
+    if page < 1:
+        return redirect("/user/" + str(user_id) + "/1")
+    if page > page_count:
+        return redirect("/user/" + str(user_id) + "/" + str(page_count))
+
+    user_routes = users.get_routes(user_id, page, PAGE_SIZE)
+    return render_template("show_user.html", user=user, statistics=statistics,
+                           routes=user_routes, page=page, page_count=page_count)
+
 @app.route("/find_route")
 def find_route():
     query = request.args.get("query", "")

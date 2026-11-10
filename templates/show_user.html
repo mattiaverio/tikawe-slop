@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}Käyttäjä {{ user.username }}{% endblock %}
+
+{% block content %}
+<h2>Käyttäjä {{ user.username }}</h2>
+
+<h3>Tilastot</h3>
+
+<ul class="facts">
+  <li>Lisättyjä reittejä: {{ statistics.route_count }}</li>
+  <li>Reittien yhteispituus: {{ statistics.total_km }} km</li>
+  <li>Kirjoitettuja kommentteja: {{ statistics.comment_count }}</li>
+  {% if statistics.average_rating %}
+  <li>Reittien saamien arvosanojen keskiarvo: {{ statistics.average_rating }}/5</li>
+  {% endif %}
+</ul>
+
+<h3>Reitit</h3>
+
+{% for route in routes %}
+<div class="route">
+  <h3><a href="/route/{{ route.id }}">{{ route.title }}</a></h3>
+  <p class="details">
+    {{ route.length_km }} km · lisätty {{ route.created_at }}
+  </p>
+</div>
+{% else %}
+<p>
+  Käyttäjä ei ole lisännyt reittejä.
+</p>
+{% endfor %}
+
+<p class="pages">
+  {% if page > 1 %}
+  <a href="/user/{{ user.id }}/{{ page - 1 }}">&lt;&lt; Edellinen</a>
+  {% endif %}
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+  <a href="/user/{{ user.id }}/{{ page + 1 }}">Seuraava &gt;&gt;</a>
+  {% endif %}
+</p>
+{% endblock %}
