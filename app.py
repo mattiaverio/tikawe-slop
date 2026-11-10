@@ -234,6 +234,49 @@ def remove_comment():
     flash("Kommentti poistettu")
     return redirect("/route/" + str(comment["route_id"]))
 
+@app.route("/images/<int:route_id>")
+def edit_images(route_id):
+    require_login()
+    route = get_own_route(route_id)
+
+    images = routes.get_images(route_id)
+    return render_template("images.html", route=route, images=images)
+
+@app.route("/add_image", methods=["POST"])
+def add_image():
+    require_login()
+    check_csrf()
+
+    route_id = request.form["route_id"]
+    get_own_route(route_id)
+
+    file = request.files["image"]
+    if not file.filename.endswith(".png"):
+        flash("VIRHE: väärä tiedostomuoto")
+        return redirect("/images/" + str(route_id))
+
+    image = file.read()
+    if len(image) > 100 * 1024:
+        flash("VIRHE: liian suuri kuva")
+        return redirect("/images/" + str(route_id))
+
+    routes.add_image(route_id, image)
+    flash("Kuva lisätty")
+    return redirect("/images/" + str(route_id))
+
+@app.route("/remove_images", methods=["POST"])
+def remove_images():
+    require_login()
+    check_csrf()
+
+    route_id = request.form["route_id"]
+    get_own_route(route_id)
+
+    for image_id in request.form.getlist("image_id"):
+        routes.remove_image(route_id, image_id)
+
+    return redirect("/images/" + str(route_id))
+
 @app.route("/register")
 def register():
     return render_template("register.html", filled={})
