@@ -26,6 +26,23 @@ def check_csrf():
     if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
+def get_page_count(item_count):
+    return max(math.ceil(item_count / PAGE_SIZE), 1)
+
+@app.route("/")
+@app.route("/<int:page>")
+def index(page=1):
+    page_count = get_page_count(routes.get_route_count())
+
+    if page < 1:
+        return redirect("/1")
+    if page > page_count:
+        return redirect("/" + str(page_count))
+
+    page_routes = routes.get_routes(page, PAGE_SIZE)
+    return render_template("index.html", routes=page_routes,
+                           page=page, page_count=page_count)
+
 @app.route("/register")
 def register():
     return render_template("register.html", filled={})

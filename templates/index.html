@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Etusivu{% endblock %}
+
+{% block content %}
+<h2>Uusimmat reitit</h2>
+
+{% for route in routes %}
+<div class="route">
+  <h3><a href="/route/{{ route.id }}">{{ route.title }}</a></h3>
+  <p class="details">
+    {{ route.length_km }} km ·
+    <a href="/user/{{ route.user_id }}">{{ route.username }}</a> ·
+    {{ route.comment_count }} kommenttia
+    {% if route.average_rating %}
+    · arvosana {{ route.average_rating }}/5
+    {% endif %}
+  </p>
+</div>
+{% else %}
+<p>
+  Reittejä ei ole vielä lisätty.
+</p>
+{% endfor %}
+
+<p class="pages">
+  {% if page > 1 %}
+  <a href="/{{ page - 1 }}">&lt;&lt; Edellinen</a>
+  {% endif %}
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+  <a href="/{{ page + 1 }}">Seuraava &gt;&gt;</a>
+  {% endif %}
+</p>
+{% endblock %}
