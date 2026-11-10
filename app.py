@@ -60,6 +60,12 @@ def read_route_form():
 
     return title, description, int(length_km), classes
 
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
+
 @app.route("/")
 @app.route("/<int:page>")
 def index(page=1):
@@ -73,6 +79,29 @@ def index(page=1):
     page_routes = routes.get_routes(page, PAGE_SIZE)
     return render_template("index.html", routes=page_routes,
                            page=page, page_count=page_count)
+
+@app.route("/route/<int:route_id>")
+def show_route(route_id):
+    route = routes.get_route(route_id)
+    if not route:
+        abort(404)
+    classes = routes.get_classes(route_id)
+    comments = routes.get_comments(route_id)
+    average_rating = routes.get_average_rating(route_id)
+    images = routes.get_images(route_id)
+    return render_template("show_route.html", route=route, classes=classes,
+                           comments=comments, average_rating=average_rating,
+                           images=images)
+
+@app.route("/image/<int:image_id>")
+def show_image(image_id):
+    image = routes.get_image(image_id)
+    if not image:
+        abort(404)
+
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/png")
+    return response
 
 @app.route("/new_route")
 def new_route():
