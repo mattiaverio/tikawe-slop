@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fi">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}{% endblock %} – Retkireitit</title>
+  <link rel="stylesheet" href="/static/main.css" />
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="/">Retkireitit</a></h1>
+      <nav>
+        <a href="/">Etusivu</a>
+        <a href="/find_route">Etsi reittejä</a>
+        {% if session.user_id %}
+        <a href="/new_route">Uusi reitti</a>
+        <a href="/user/{{ session.user_id }}">{{ session.username }}</a>
+        <form action="/logout" method="post">
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+          <input type="submit" class="link" value="Kirjaudu ulos" />
+        </form>
+        {% else %}
+        <a href="/login">Kirjaudu sisään</a>
+        <a href="/register">Luo tunnus</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% for message in get_flashed_messages() %}
+    <p class="info{% if message.startswith('VIRHE') %} error{% endif %}">
+      {{ message }}
+    </p>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+  </main>
+</body>
+
+</html>
