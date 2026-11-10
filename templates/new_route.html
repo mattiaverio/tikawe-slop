@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}Uusi reitti{% endblock %}
+
+{% block content %}
+<h2>Uusi reitti</h2>
+
+<form action="/create_route" method="post">
+  <p>
+    <label for="title">Nimi</label>: <br />
+    <input type="text" name="title" id="title" size="40" maxlength="50" required />
+  </p>
+  <p>
+    <label for="description">Kuvaus</label>: <br />
+    <textarea name="description" id="description" rows="8" cols="60" maxlength="2000" required></textarea>
+  </p>
+  <p>
+    <label for="length_km">Pituus (km)</label>: <br />
+    <input type="text" name="length_km" id="length_km" size="8" pattern="[1-9][0-9]{0,2}" title="Kokonaisluku väliltä 1–999" required />
+  </p>
+  {% for class in classes %}
+  <p>
+    <label for="class{{ loop.index }}">{{ class }}</label>: <br />
+    <select name="classes" id="class{{ loop.index }}">
+      <option value="">(valitse)</option>
+      {% for option in classes[class] %}
+      <option value="{{ class }}:{{ option }}">{{ option }}</option>
+      {% endfor %}
+    </select>
+  </p>
+  {% endfor %}
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lisää reitti" />
+</form>
+{% endblock %}
