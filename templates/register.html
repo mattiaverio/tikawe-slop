@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Tunnuksen luonti{% endblock %}
+
+{% block content %}
+<h2>Tunnuksen luonti</h2>
+
+<form action="/create" method="post">
+  <p>
+    <label for="username">Tunnus (3–16 merkkiä: a–z, 0–9, _)</label>: <br />
+    <input type="text" name="username" id="username" value="{{ filled.username }}" minlength="3" maxlength="16" pattern="[a-zA-Z0-9_]{3,16}" required />
+  </p>
+  <p>
+    <label for="password1">Salasana (vähintään 8 merkkiä)</label>: <br />
+    <input type="password" name="password1" id="password1" minlength="8" maxlength="100" required />
+  </p>
+  <p>
+    <label for="password2">Salasana uudestaan</label>: <br />
+    <input type="password" name="password2" id="password2" minlength="8" maxlength="100" required />
+  </p>
+  <input type="submit" value="Luo tunnus" />
+</form>
+{% endblock %}

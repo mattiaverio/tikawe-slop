@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ route.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ route.title }}</h2>
+
+{% if session.user_id == route.user_id %}
+<p class="actions">
+  <a href="/edit_route/{{ route.id }}">Muokkaa</a>
+  <a href="/images/{{ route.id }}">Kuvat</a>
+  <a href="/remove_route/{{ route.id }}">Poista</a>
+</p>
+{% endif %}
+
+<ul class="facts">
+  <li>Pituus: {{ route.length_km }} km</li>
+  <li>Lisääjä: <a href="/user/{{ route.user_id }}">{{ route.username }}</a></li>
+  <li>Lisätty: {{ route.created_at }}</li>
+  {% for class in classes %}
+  <li>{{ class.title }}: {{ class.value }}</li>
+  {% endfor %}
+  {% if average_rating %}
+  <li>Arvosanojen keskiarvo: {{ average_rating }}/5</li>
+  {% endif %}
+</ul>
+
+{% for image in images %}
+<img src="/image/{{ image.id }}" alt="Kuva reitiltä {{ route.title }}" />
+{% endfor %}
+
+<p>
+  {{ route.description | show_lines }}
+</p>
+
+<h3>Kommentit ({{ comments | count }})</h3>
+
+{% for comment in comments %}
+<div class="comment">
+  <p class="details">
+    <a href="/user/{{ comment.user_id }}">{{ comment.username }}</a> ·
+    arvosana {{ comment.rating }}/5 ·
+    {{ comment.created_at }}
+  </p>
+  <p>
+    {{ comment.content | show_lines }}
+  </p>
+  {% if session.user_id == comment.user_id %}
+  <form action="/remove_comment" method="post">
+    <input type="hidden" name="comment_id" value="{{ comment.id }}" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="submit" class="link" value="Poista kommentti" />
+  </form>
+  {% endif %}
+</div>
+{% else %}
+<p>
+  Reittiä ei ole vielä kommentoitu.
+</p>
+{% endfor %}
+
+{% if session.user_id %}
+<h3>Uusi kommentti</h3>
+
+<form action="/create_comment" method="post">
+  <p>
+    <label for="rating">Arvosana</label>: <br />
+    <select name="rating" id="rating" required>
+      <option value="5">5 – erinomainen</option>
+      <option value="4">4 – hyvä</option>
+      <option value="3">3 – kohtalainen</option>
+      <option value="2">2 – välttävä</option>
+      <option value="1">1 – heikko</option>
+    </select>
+  </p>
+  <p>
+    <label for="content">Kommentti</label>: <br />
+    <textarea name="content" id="content" rows="5" cols="60" maxlength="1000" required></textarea>
+  </p>
+  <input type="hidden" name="route_id" value="{{ route.id }}" />
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  <input type="submit" value="Lähetä kommentti" />
+</form>
+{% else %}
+<p>
+  <a href="/login">Kirjaudu sisään</a>, jos haluat kommentoida reittiä.
+</p>
+{% endif %}
+{% endblock %}
