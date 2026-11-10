@@ -122,3 +122,33 @@ def find_routes(query, classes, page, page_size):
     limit = page_size
     offset = page_size * (page - 1)
     return db.query(sql, params + [limit, offset])
+
+def add_comment(route_id, user_id, content, rating):
+    sql = """INSERT INTO comments (route_id, user_id, content, rating, created_at)
+             VALUES (?, ?, ?, ?, datetime('now', 'localtime'))"""
+    db.execute(sql, [route_id, user_id, content, rating])
+
+def get_comments(route_id):
+    sql = """SELECT comments.id,
+                    comments.content,
+                    comments.rating,
+                    comments.created_at,
+                    users.id user_id,
+                    users.username
+             FROM comments JOIN users ON comments.user_id = users.id
+             WHERE comments.route_id = ?
+             ORDER BY comments.id DESC"""
+    return db.query(sql, [route_id])
+
+def get_comment(comment_id):
+    sql = "SELECT id, route_id, user_id FROM comments WHERE id = ?"
+    result = db.query(sql, [comment_id])
+    return result[0] if result else None
+
+def remove_comment(comment_id):
+    sql = "DELETE FROM comments WHERE id = ?"
+    db.execute(sql, [comment_id])
+
+def get_average_rating(route_id):
+    sql = "SELECT ROUND(AVG(rating), 1) FROM comments WHERE route_id = ?"
+    return db.query(sql, [route_id])[0][0]
