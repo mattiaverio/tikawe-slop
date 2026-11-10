@@ -158,6 +158,21 @@ def update_route():
     flash("Muutokset tallennettu")
     return redirect("/route/" + str(route_id))
 
+@app.route("/remove_route/<int:route_id>", methods=["GET", "POST"])
+def remove_route(route_id):
+    require_login()
+    route = get_own_route(route_id)
+
+    if request.method == "GET":
+        return render_template("remove_route.html", route=route)
+
+    check_csrf()
+    if "remove" in request.form:
+        routes.remove_route(route_id)
+        flash("Reitti poistettu")
+        return redirect("/")
+    return redirect("/route/" + str(route_id))
+
 @app.route("/register")
 def register():
     return render_template("register.html", filled={})
