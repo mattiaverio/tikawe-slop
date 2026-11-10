@@ -62,6 +62,30 @@ def get_route(route_id):
     result = db.query(sql, [route_id])
     return result[0] if result else None
 
+def update_route(route_id, title, description, length_km, classes):
+    sql = """UPDATE routes SET title = ?,
+                               description = ?,
+                               length_km = ?
+                           WHERE id = ?"""
+    db.execute(sql, [title, description, length_km, route_id])
+
+    sql = "DELETE FROM route_classes WHERE route_id = ?"
+    db.execute(sql, [route_id])
+
+    sql = "INSERT INTO route_classes (route_id, title, value) VALUES (?, ?, ?)"
+    for class_title, class_value in classes:
+        db.execute(sql, [route_id, class_title, class_value])
+
+def remove_route(route_id):
+    sql = "DELETE FROM comments WHERE route_id = ?"
+    db.execute(sql, [route_id])
+    sql = "DELETE FROM images WHERE route_id = ?"
+    db.execute(sql, [route_id])
+    sql = "DELETE FROM route_classes WHERE route_id = ?"
+    db.execute(sql, [route_id])
+    sql = "DELETE FROM routes WHERE id = ?"
+    db.execute(sql, [route_id])
+
 def get_classes(route_id):
     sql = "SELECT title, value FROM route_classes WHERE route_id = ? ORDER BY id"
     return db.query(sql, [route_id])
