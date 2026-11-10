@@ -60,6 +60,14 @@ def read_route_form():
 
     return title, description, int(length_km), classes
 
+def get_own_route(route_id):
+    route = routes.get_route(route_id)
+    if not route:
+        abort(404)
+    if route["user_id"] != session["user_id"]:
+        abort(403)
+    return route
+
 @app.template_filter()
 def show_lines(content):
     content = str(markupsafe.escape(content))
@@ -119,6 +127,35 @@ def create_route():
 
     route_id = routes.add_route(title, description, length_km, user_id, classes)
     flash("Reitti lisätty")
+    return redirect("/route/" + str(route_id))
+
+@app.route("/edit_route/<int:route_id>")
+def edit_route(route_id):
+    require_login()
+    route = get_own_route(route_id)
+
+    all_classes = routes.get_all_classes()
+    classes = {}
+    for class_title in all_classes:
+        classes[class_title] = ""
+    for entry in routes.get_classes(route_id):
+        classes[entry["title"]] = entry["value"]
+
+    return render_template("edit_route.html", route=route, classes=classes,
+                           all_classes=all_classes)
+
+@app.route("/update_route", methods=["POST"])
+def update_route():
+    require_login()
+    check_csrf()
+
+    route_id = request.form["route_id"]
+    get_own_route(route_id)
+
+    title, description, length_km, classes = read_route_form()
+
+    routes.update_route(route_id, title, description, length_km, classes)
+    flash("Muutokset tallennettu")
     return redirect("/route/" + str(route_id))
 
 @app.route("/register")
