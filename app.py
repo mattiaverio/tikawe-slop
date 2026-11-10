@@ -88,6 +88,30 @@ def index(page=1):
     return render_template("index.html", routes=page_routes,
                            page=page, page_count=page_count)
 
+@app.route("/find_route")
+def find_route():
+    query = request.args.get("query", "")
+    if len(query) > 50:
+        abort(403)
+    page = request.args.get("page", 1, type=int)
+    all_classes = routes.get_all_classes()
+    classes = read_classes(request.args.getlist("classes"))
+
+    searched = bool(query or classes)
+    results = []
+    result_count = 0
+    page_count = 1
+    if searched:
+        result_count = routes.get_result_count(query, classes)
+        page_count = get_page_count(result_count)
+        page = min(max(page, 1), page_count)
+        results = routes.find_routes(query, classes, page, PAGE_SIZE)
+
+    selected = [class_title + ":" + class_value for class_title, class_value in classes]
+    return render_template("find_route.html", query=query, all_classes=all_classes,
+                           selected=selected, searched=searched, results=results,
+                           result_count=result_count, page=page, page_count=page_count)
+
 @app.route("/route/<int:route_id>")
 def show_route(route_id):
     route = routes.get_route(route_id)

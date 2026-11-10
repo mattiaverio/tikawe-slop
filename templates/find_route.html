@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Etsi reittejä{% endblock %}
+
+{% block content %}
+<h2>Etsi reittejä</h2>
+
+<form action="/find_route" method="get">
+  <p>
+    <label for="query">Hakusana</label>: <br />
+    <input type="text" name="query" id="query" value="{{ query }}" size="40" maxlength="50" />
+  </p>
+  {% for class in all_classes %}
+  <p>
+    <label for="class{{ loop.index }}">{{ class }}</label>: <br />
+    <select name="classes" id="class{{ loop.index }}">
+      <option value="">(kaikki)</option>
+      {% for option in all_classes[class] %}
+      {% if class + ":" + option in selected %}
+      <option value="{{ class }}:{{ option }}" selected>{{ option }}</option>
+      {% else %}
+      <option value="{{ class }}:{{ option }}">{{ option }}</option>
+      {% endif %}
+      {% endfor %}
+    </select>
+  </p>
+  {% endfor %}
+  <input type="submit" value="Hae" />
+</form>
+
+{% if searched %}
+<h3>Tulokset ({{ result_count }})</h3>
+
+{% for route in results %}
+<div class="route">
+  <h3><a href="/route/{{ route.id }}">{{ route.title }}</a></h3>
+  <p class="details">
+    {{ route.length_km }} km ·
+    <a href="/user/{{ route.user_id }}">{{ route.username }}</a>
+  </p>
+</div>
+{% else %}
+<p>
+  Hakuehdoilla ei löytynyt reittejä.
+</p>
+{% endfor %}
+
+<form action="/find_route" method="get" class="pages">
+  <input type="hidden" name="query" value="{{ query }}" />
+  {% for entry in selected %}
+  <input type="hidden" name="classes" value="{{ entry }}" />
+  {% endfor %}
+  {% if page > 1 %}
+  <button type="submit" name="page" value="{{ page - 1 }}" class="link">&lt;&lt; Edellinen</button>
+  {% endif %}
+  Sivu {{ page }}/{{ page_count }}
+  {% if page < page_count %}
+  <button type="submit" name="page" value="{{ page + 1 }}" class="link">Seuraava &gt;&gt;</button>
+  {% endif %}
+</form>
+{% endif %}
+{% endblock %}
