@@ -89,3 +89,36 @@ def remove_route(route_id):
 def get_classes(route_id):
     sql = "SELECT title, value FROM route_classes WHERE route_id = ? ORDER BY id"
     return db.query(sql, [route_id])
+
+def get_search_condition(query, classes):
+    like = "%" + query + "%"
+    condition = "(routes.title LIKE ? OR routes.description LIKE ?)"
+    params = [like, like]
+
+    for class_title, class_value in classes:
+        condition += """ AND routes.id IN (SELECT route_id
+                                           FROM route_classes
+                                           WHERE title = ? AND value = ?)"""
+        params += [class_title, class_value]
+
+    return condition, params
+
+def get_result_count(query, classes):
+    condition, params = get_search_condition(query, classes)
+    sql = "SELECT COUNT(routes.id) FROM routes WHERE " + condition
+    return db.query(sql, params)[0][0]
+
+def find_routes(query, classes, page, page_size):
+    condition, params = get_search_condition(query, classes)
+    sql = """SELECT routes.id,
+                    routes.title,
+                    routes.length_km,
+                    users.id user_id,
+                    users.username
+             FROM routes JOIN users ON routes.user_id = users.id
+             WHERE """ + condition + """
+             ORDER BY routes.id DESC
+             LIMIT ? OFFSET ?"""
+    limit = page_size
+    offset = page_size * (page - 1)
+    return db.query(sql, params + [limit, offset])
