@@ -152,3 +152,20 @@ def remove_comment(comment_id):
 def get_average_rating(route_id):
     sql = "SELECT ROUND(AVG(rating), 1) FROM comments WHERE route_id = ?"
     return db.query(sql, [route_id])[0][0]
+
+def add_image(route_id, image):
+    sql = "INSERT INTO images (route_id, image) VALUES (?, ?)"
+    db.execute(sql, [route_id, image])
+
+def get_images(route_id):
+    sql = "SELECT id FROM images WHERE route_id = ? ORDER BY id"
+    return db.query(sql, [route_id])
+
+def get_image(image_id):
+    sql = "SELECT image FROM images WHERE id = ?"
+    result = db.query(sql, [image_id])
+    return result[0][0] if result else None
+
+def remove_image(route_id, image_id):
+    sql = "DELETE FROM images WHERE id = ? AND route_id = ?"
+    db.execute(sql, [image_id, route_id])
