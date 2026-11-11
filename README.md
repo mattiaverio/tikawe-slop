@@ -1,3 +1,20 @@
+> [!NOTE]
+> **This is an experiment, not a course submission.**
+> The question was whether the University of Helsinki course
+> [Tietokannat ja web-ohjelmointi](https://hy-tikawe.github.io/materiaali/) could be one-shotted by an AI coding agent from a single simple prompt.
+>
+> **Prompt** (verbatim, to Claude Code running Claude Fable 5.2):
+> *"https://hy-tikawe.github.io/materiaali/ pls do the needful for full score. I have tikawe-slop repo for this"*
+>
+> **What the agent did, with no further guidance:**
+> read the course material, grading criteria and example app, chose a topic, wrote the whole application, tested it with 49 scripted checks, ran Pylint, and measured performance with 1,000,000 seeded comments.
+>
+> **Result:** an app that targets every technical criterion for grade 5 on the course's grading page, as assessed by the agent itself.
+>
+> **Not covered:** peer reviews, course feedback and the interim deadlines, which the grade also depends on.
+>
+> **Branches:** [`one-shot`](../../tree/one-shot) is the agent's original output in 7 commits. `main` is the same code re-split into per-feature commits using a single follow-up prompt.
+
 # Retkireitit
 
 Sovelluksessa käyttäjät jakavat retkeily- ja vaellusreittejä sekä kommentoivat ja arvioivat toistensa reittejä.
